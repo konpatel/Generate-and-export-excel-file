@@ -1,0 +1,10 @@
+<h3>Add your column names to display the table</h3>
+<form [formGroup]="rowForm">
+  <div fxLayout="column" fxLayoutAlign="start center" *ngFor="let column of dialogData.columnList">
+    <mat-form-field appearance="fill" *ngIf="column.name !== 'action' && column.name !== 'columnType'">
+      <mat-label> {{column.name}} </mat-label>
+      <input matInput type="text" [formControlName]="column.name" autocomplete="off">
+    </mat-form-field>
+  </div>
+  <button mat-raised-button (click)="save()">Save row</button>
+</form>

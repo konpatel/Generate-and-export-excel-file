@@ -1,0 +1,78 @@
+<mat-toolbar>
+  <h3>Add your column names to display the table</h3>
+</mat-toolbar>
+<div fxLayout="row" fxLayoutAlign="center center" class="form-class">
+  <form [formGroup]="columnForm">
+    <ng-container formArrayName="propertyList">
+      <div *ngFor="let property of propertyList.controls; let i= index">
+        <div [formGroupName]="i">
+          <div>
+            <div fxLayout="column" fxLayoutAlign="start center">
+              <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
+                <mat-form-field appearance="fill">
+                  <mat-label>Column {{i + 1}} header</mat-label>
+                  <input matInput type="text" [formControlName]="'name'" autocomplete="off">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                  <mat-label>Choose type of column</mat-label>
+                  <mat-select [formControlName]="'type'">
+                    <mat-option value="text">Text</mat-option>
+                    <mat-option value="number">Number</mat-option>
+                    <mat-option value="currency">Currency</mat-option>
+                    <mat-option value="double">Decimal</mat-option>
+                    <mat-option value="date">Date</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <button *ngIf="propertyList.length > 1" mat-mini-fab (click)="removeProperty(i)">
+                  <mat-icon>remove</mat-icon>
+                </button>
+              </div>
+              <button class="add-button-class" *ngIf="propertyList.length === i+1" mat-mini-fab (click)="addProperty()">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <div fxLayout="row" fxLayoutAlign="center center" class="display-button-class">
+      <button mat-raised-button (click)="displayTable()">Display table</button>
+    </div>
+  </form>
+</div>
+
+<div fxLayout="row" fxLayoutAlign="start center">
+  <button *ngIf="showTable" class="button-add-row" mat-button (click)="addRow()">Add Row</button>
+  <button *ngIf="showTable" class="button-add-row" mat-button (click)="export()">Export to excel</button>
+</div>
+
+<div *ngIf="showTable" class="table-class">
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <ng-container *ngFor="let name of displayedColumnNames">
+      <ng-container *ngIf="name !== 'action' && name !== 'columnType'" matColumnDef="{{name}}">
+        <th mat-header-cell *matHeaderCellDef> {{name | titlecase}} </th>
+        <td mat-cell *matCellDef="let element">
+          {{element[name]}}
+        </td>
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef> Action</th>
+      <td mat-cell *matCellDef="let element; let i = index" class="action-link">
+        <button mat-mini-fab (click)="editElement(element)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button class="delete-button" mat-mini-fab (click)="deleteElement(i)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumnNames"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumnNames"></tr>
+  </table>
+</div>
